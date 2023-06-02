@@ -7,11 +7,8 @@ export class AuthCredentialsDto {
   username: string;
 
   @IsString()
-  @MinLength(8)
-  @MaxLength(32)
-  @Matches(
-    /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$/,
-    { message: 'Password is too weak.' },
-  )
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+    message: 'Password is too weak.',
+  })
   password: string;
 }
