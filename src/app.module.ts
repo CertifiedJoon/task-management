@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     TasksModule,
+    AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -23,7 +24,6 @@ import { AuthModule } from './auth/auth.module';
       }),
       inject: [ConfigService],
     }),
-    AuthModule,
   ],
   controllers: [],
   providers: [],
