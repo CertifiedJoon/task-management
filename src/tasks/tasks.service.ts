@@ -14,19 +14,20 @@ export class TasksService {
     private tasksRepository: Repository<Task>,
   ) {}
 
-  async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
+  async getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
     const { status, search } = filterDto;
 
     const query = this.tasksRepository.createQueryBuilder('task');
+    query.where({ user });
 
     if (status) {
       //:status and status in object are mapped, :hello -> hello
-      query.where('task.status = :status', { status });
+      query.andWhere('task.status = :status', { status });
     }
 
     if (search) {
       query.andWhere(
-        'task.title LIKE :search OR task.description LIKE :search',
+        '(LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search))',
         { search: `%${search}%` },
       );
     }
@@ -50,10 +51,11 @@ export class TasksService {
     return task;
   }
 
-  async getTaskById(id: string): Promise<Task> {
+  async getTaskById(id: string, user: User): Promise<Task> {
     const found = await this.tasksRepository.findOne({
       where: {
         id: id,
+        user: user,
       },
     });
 
@@ -64,8 +66,8 @@ export class TasksService {
     return found;
   }
 
-  async deleteTaskById(id: string): Promise<string> {
-    const found = await this.tasksRepository.findOneBy({ id: id });
+  async deleteTaskById(id: string, user: User): Promise<string> {
+    const found = await this.tasksRepository.findOneBy({ id: id, user: user });
 
     if (!found) {
       throw new NotFoundException(`Task with id "${id}" not found.`);
@@ -74,14 +76,13 @@ export class TasksService {
     await this.tasksRepository.remove(found);
     return id;
   }
-  // public deleteTaskById(id: string): string {
-  //   const found = this.getTaskById(id);
-  //   this.tasks = this.tasks.filter((task) => task.id !== id);
-  //   return id;
-  // }
 
-  async updateTaskStatusById(id: string, status: TaskStatus): Promise<Task> {
-    const task = await this.tasksRepository.findOneBy({ id: id });
+  async updateTaskStatusById(
+    id: string,
+    status: TaskStatus,
+    user: User,
+  ): Promise<Task> {
+    const task = await this.tasksRepository.findOneBy({ id: id, user: user });
 
     if (!task) {
       throw new NotFoundException(`Task with id "${id}" not found.`);
@@ -91,16 +92,4 @@ export class TasksService {
     await this.tasksRepository.save(task);
     return task;
   }
-
-  // public updateTaskStatusById(id: string, status: TaskStatus): Task {
-  //   var task = this.getTaskById(id); // advantage of outsourcing work to services from controller.
-  //   if (status === 'DONE') {
-  //     task.status = TaskStatus.DONE;
-  //   } else if (status === 'IN_PROGRESS') {
-  //     task.status = TaskStatus.IN_PROGRESS;
-  //   } else if (status === 'OPEN') {
-  //     task.status = TaskStatus.OPEN;
-  //   }
-  //   return task;
-  // }
 }
