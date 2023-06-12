@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <p>Before the script</p>
+    <script>
+      // Two attributes. 1. Type required in HTML4 2. Language, now default to js
+      alert('Hello, world!');
+    </script>
+    <p>After the script.</p>
+  </body>
+  <script src="file.js">
+    alert(1); // the content is ignored, because src is set
+  </script>
+</html>
