@@ -97,3 +97,5 @@ let values = [
 ];
 
 console.log(unique(values));
+
+// task2
