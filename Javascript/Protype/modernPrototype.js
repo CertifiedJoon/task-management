@@ -18,7 +18,7 @@ let bunny = Object.create(animal, {
 
 console.log(bunny.jumps);
 
-// usecase in cloning
+// usecase in cloning, most powerful copying
 let clone = Object.create(
   Object.getPrototypeOf(obj),
   Object.getOwnPropertyDescriptors(obj),
